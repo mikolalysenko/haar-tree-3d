@@ -15,7 +15,7 @@ module.exports = function toNDArray (index) {
     var w = cell.w
     var l = cell.l
 
-    var rshift = (30 - l)
+    var rshift = (30 - depth + l)
     var x = cell.x >> rshift
     var y = cell.y >> rshift
     var z = cell.z >> rshift

@@ -1,150 +1,63 @@
-const regl = require('regl')()
+const regl = require('regl')({ extensions: 'OES_element_index_uint' })
 const bunny = require('bunny')
+const calcNormals = require('angle-normals')
 const leg = require('./leg.json')
 const rasterizeMesh = require('../rasterize-cells')
+const contourHaar = require('../contour')
 const camera = require('regl-camera')(regl, {})
 
-// debugger
+const haarIndex = rasterizeMesh(leg.cells, leg.positions, {depth: 6})
+const haarMesh = contourHaar(haarIndex, 0.1)
 
-const cubePoints = []
-const cubeCells = []
+const drawMesh = processMesh(haarMesh)
+const drawOriginal = processMesh(leg)
 
-function emitCube (cx, cy, cz) {
-  for (var d = 0; d < 3; ++d) {
-    for (var s = -1; s <= 1; s += 2) {
-      var u = [0, 0, 0]
-      var v = [0, 0, 0]
-      var x = [cx, cy, cz]
-
-      x[d] += s
-      if (s > 0) {
-        u[(d + 1) % 3] = 1
-        v[(d + 2) % 3] = 1
-      } else {
-        v[(d + 1) % 3] = 1
-        u[(d + 2) % 3] = 1
-      }
-
-      var I = cubePoints.length
-
-      for (var du = -1; du < 2; du += 2) {
-        for (var dv = -1; dv < 2; dv += 2) {
-          var h = [0, 0, 0]
-          for (var i = 0; i < 3; ++i) {
-            h[i] = x[i] + du * u[i] + dv * v[i]
-          }
-          cubePoints.push(h)
-        }
-      }
-
-      cubeCells.push(
-        [I, I + 1, I + 2],
-        [I + 2, I + 1, I + 3])
+function processMesh ({cells, positions}) {
+  return regl({
+    frag: `
+    precision highp float;
+    uniform vec4 color;
+    varying vec3 vnormal;
+    void main () {
+      gl_FragColor = vec4(vnormal, 1);
     }
-  }
+    `,
+
+    vert: `
+    precision highp float;
+    attribute vec3 position, normal;
+    uniform mat4 view, projection;
+    varying vec3 vnormal;
+    void main () {
+      vnormal = normal;
+      gl_Position = projection * view * vec4(position, 1);
+    }`,
+
+    attributes: {
+      'position': positions,
+      'normal': calcNormals(cells, positions)
+    },
+
+    uniforms: {
+      color: regl.prop('color')
+    },
+
+    // primitive: 'lines',
+
+    elements: (() => {
+      return cells
+      var p = []
+      cells.forEach((c) => {
+        p.push(
+          c[0], c[1],
+          c[1], c[2],
+          c[2], c[0]
+        )
+      })
+      return p
+    })()
+  })
 }
-
-const haarBunny = rasterizeMesh(leg.cells, leg.positions, {depth: 4})
-var flatCells = require('../lib/flatten')(haarBunny)
-// var codeDelta = require('../lib/delta')
-// var locateCell = require('../lib/locate')
-for (var i = 0; i < flatCells.length; ++i) {
-  for (var j = 0; j < flatCells.length; ++j) {
-    var ac = flatCells[i]
-    var bc = flatCells[j]
-    var d = (ac.c0 - bc.c0) || (ac.c1 - bc.c1) || (ac.c2 - bc.c2)
-    if ((i < j) !== (d < 0)) {
-      console.log('error:', i, j, d, flatCells[i], flatCells[j])
-    } else if (i === j && d !== 0) {
-      console.log('error:', i, d, flatCells[i])
-    }
-  }
-}
-
-/*
-for (var ix = 0; ix < 256; ix += 4) {
-  for (var iy = 0; iy < 256; iy += 4) {
-    for (var iz = 0; iz < 256; iz += 4) {
-      var idx = locateCell(flatCells, ix, iy, iz, 8)
-      var cell = flatCells[idx]
-      console.log(cell, idx, ix, iy, iz)
-    }
-  }
-}
-*/
-
-const drawMesh = regl({
-  frag: `
-  precision highp float;
-  uniform vec4 color;
-  void main () {
-    gl_FragColor = color;
-  }
-  `,
-
-  vert: `
-  precision highp float;
-  attribute vec3 position;
-  uniform mat4 view, projection;
-  void main () {
-    gl_Position = projection * view * vec4(position, 1);
-  }`,
-
-  attributes: {
-    'position': leg.positions
-  },
-
-  uniforms: {
-    color: regl.prop('color')
-  },
-
-  primitive: 'lines',
-
-  elements: (() => {
-    var p = []
-    leg.cells.forEach((c) => {
-      p.push(
-        c[0], c[1],
-        c[1], c[2],
-        c[2], c[0]
-      )
-    })
-    return p
-  })()
-})
-
-const drawNodeEdges = regl({
-  frag: `
-  precision highp float;
-  uniform vec3 bounds[2];
-  void main () {
-    gl_FragColor = vec4(0.5 * (1. + bounds[0] + bounds[1]), 1);
-  }
-  `,
-
-  vert: `
-  precision highp float;
-  attribute vec3 position;
-  uniform vec3 bounds[2];
-  uniform mat4 view, projection;
-  void main () {
-    vec3 p = mix(bounds[0], bounds[1], position);
-    gl_Position = projection * view * vec4(p, 1);
-  }`,
-
-  uniforms: {
-    'bounds[0]': regl.prop('bounds[0]'),
-    'bounds[1]': regl.prop('bounds[1]')
-  },
-
-  attributes: {
-    'position': regl.prop('edges')
-  },
-
-  primitive: 'lines',
-
-  count: (_, {edges}) => edges.length / 3
-})
 
 const drawBox = regl({
   frag: `
@@ -223,50 +136,66 @@ const drawBox = regl({
   primitive: 'triangles'
 })
 
-function drawNode (node, bounds, weight, boxes) {
-  if (!node) {
-    boxes.push({
-      bounds,
-      color: [weight, weight, weight, 1]
-    })
-    return
-  }
-  /*
-  drawNodeEdges({
-    bounds,
-    edges: node.edges
-  })
-  */
-  for (var i = 0; i < node.children.length; ++i) {
-    var w = weight
-    var b = [bounds[0].slice(), bounds[1].slice()]
-    for (var j = 0; j < 3; ++j) {
-      var x = 0.5 * (bounds[0][j] + bounds[1][j])
-      if (i & (1 << j)) {
-        b[0][j] = x
-      } else {
-        b[1][j] = x
-      }
-    }
-    for (var k = 0; k < 7; ++k) {
-      var s = (k + 1) & i
-      var p = 1
-      for (var l = 0; l < 3; ++l) {
-        if (s & (1 << l)) {
-          p = -p
+const drawWireBox = regl({
+  frag: `
+  precision highp float;
+  uniform vec4 color;
+  void main () {
+    gl_FragColor = 0.25 * color;
+  }`,
+
+  vert: `
+  precision highp float;
+  attribute vec3 position;
+  uniform vec3 bounds[2];
+  uniform mat4 view, projection;
+  void main () {
+    vec3 p = mix(bounds[0], bounds[1], position);
+    gl_Position = projection * view * vec4(p, 1);
+  }`,
+
+  uniforms: {
+    'bounds[0]': regl.prop('bounds[0]'),
+    'bounds[1]': regl.prop('bounds[1]'),
+    'color': regl.prop('color')
+  },
+
+  blend: {
+    enable: true,
+    func: {
+      src: 'one',
+      dst: 'one'
+    },
+    equation: 'add'
+  },
+
+  depth: {
+    enable: true,
+    mask: false
+  },
+
+  attributes: {
+    position: (function () {
+      const points = []
+      for (var d = 0; d < 3; ++d) {
+        for (var dx = 0; dx < 2; ++dx) {
+          for (var dy = 0; dy < 2; ++dy) {
+            for (var s = 0; s <= 1; s += 1) {
+              var x = [0, 0, 0]
+              x[d] = s
+              x[(d + 1) % 3] = dx
+              x[(d + 2) % 3] = dy
+              points.push(x)
+            }
+          }
         }
       }
-      w += p * node.coeffs[k]
-    }
-    drawNode(node.children[i], b, w, boxes)
-  }
-}
-
-function drawTree (tree) {
-  var boxes = []
-  drawNode(tree.root, tree.bounds, tree.coeff, boxes)
-  drawBox(boxes)
-}
+      return points
+    })()
+  },
+  primitive: 'lines',
+  count: 24
+})
 
 regl.frame(() => {
   regl.clear({
@@ -274,9 +203,60 @@ regl.frame(() => {
     depth: 1
   })
 
+  var lo = haarIndex.bounds[0]
+  var hi = haarIndex.bounds[1]
+  var s = (hi[0] - lo[0]) / (1 << 30)
+
+  function interp (x, y, z) {
+    return [s * x + lo[0], s * y + lo[1], s * z + lo[2]]
+  }
+
   camera(() => {
-    drawTree(haarBunny)
-    // drawMesh({ color: [0, 1, 0, 1] })
+    // drawTree(haarBunny)
+    drawMesh({ color: [0, 1, 0, 1] })
+
+    // drawOriginal({ color: [1, 1, 1, 1] })
+
+    haarIndex.tree.cells.forEach(function ({x, y, z, l}) {
+      var r = 1 << (30 - l)
+      drawWireBox({
+        bounds: [
+          interp(x, y, z),
+          interp(x + r, y + r, z + r)
+        ],
+        color: [1, 1, 1, 1]
+      })
+    })
+
+    window.OCTREE_CORNERS.forEach(function ({x, y, z, w}) {
+      var p = interp(x, y, z)
+      var rad = 0.25
+      drawBox({
+        bounds: [
+          [p[0] - rad, p[1] - rad, p[2] - rad],
+          [p[0] + rad, p[1] + rad, p[2] + rad]
+        ],
+        color: [ 100 * w, 0.2, -100 * w, 1 ]
+      })
+    })
+
+    /*
+    var s = 8.0 / (1 << 30)
+    window.OCTREE_CORNERS.forEach(({x, y, z, w, adj}) => {
+      var x_ = x * s - 4
+      var y_ = y * s - 4
+      var z_ = z * s - 4
+      var rad = 0.1
+      drawBox({
+        bounds: [
+          [x_ - rad, y_ - rad, z_ - rad],
+          [x_ + rad, y_ + rad, z_ + rad]
+        ],
+        color: [ w, 0.25 * adj.length, -w, 1 ]
+      })
+    })
+    */
+
     /*
     drawBox({
       bounds: [
