@@ -6,7 +6,7 @@ const rasterizeMesh = require('../rasterize-cells')
 const contourHaar = require('../contour')
 const camera = require('regl-camera')(regl, {})
 
-const haarIndex = rasterizeMesh(leg.cells, leg.positions, {depth: 6})
+const haarIndex = rasterizeMesh(leg.cells, leg.positions, {depth: 5})
 const haarMesh = contourHaar(haarIndex, 0.1)
 
 const drawMesh = processMesh(haarMesh)
@@ -42,10 +42,10 @@ function processMesh ({cells, positions}) {
       color: regl.prop('color')
     },
 
-    // primitive: 'lines',
+    primitive: 'lines',
 
     elements: (() => {
-      return cells
+      // return cells
       var p = []
       cells.forEach((c) => {
         p.push(
@@ -216,7 +216,6 @@ regl.frame(() => {
     drawMesh({ color: [0, 1, 0, 1] })
 
     // drawOriginal({ color: [1, 1, 1, 1] })
-
     haarIndex.tree.cells.forEach(function ({x, y, z, l}) {
       var r = 1 << (30 - l)
       drawWireBox({
@@ -230,13 +229,13 @@ regl.frame(() => {
 
     window.OCTREE_CORNERS.forEach(function ({x, y, z, w}) {
       var p = interp(x, y, z)
-      var rad = 0.25
+      var rad = 0.025
       drawBox({
         bounds: [
           [p[0] - rad, p[1] - rad, p[2] - rad],
           [p[0] + rad, p[1] + rad, p[2] + rad]
         ],
-        color: [ 100 * w, 0.2, -100 * w, 1 ]
+        color: [ w, 0.5, -10 * w, 1 ]
       })
     })
 
