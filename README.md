@@ -9,7 +9,7 @@ The rasterization technique is based on the following paper:
 
 J. Manson, S. Schaefer. (2011) "[Wavelet Rasterization](http://josiahmanson.com/research/wavelet_rasterization/)", Computer Graphics Forum
 
-<img width="400px" src="img/screenshot.png" />
+<img width="300px" src="img/screenshot.png" />
 
 ## Install
 
@@ -68,7 +68,7 @@ Extracts a contour from a mesh field
 
 
 ## Credits
-<img src="img/sc.png" />
+<img width="100px" src="img/sc.png" />
 
 Development supported by [Standard Cyborg](http://www.standardcyborg.com).
 
