@@ -41,6 +41,9 @@ function clip (polyStart, polyEnd, axis) {
 
     if ((ac <= 0.5) !== (bc <= 0.5)) {
       t = (0.5 - bc) / (ac - bc)
+      if (t < 0 || t > 1) {
+        t = 0.5
+      }
       ti = 1 - t
       for (k = 0; k < 3; ++k) {
         x = ti * CLIP_BUFFER[j + k] + t * CLIP_BUFFER[i + k]

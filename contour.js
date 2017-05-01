@@ -35,281 +35,14 @@ function findCrossing (positions, s, lox, loy, loz, a, b) {
   return idx
 }
 
-function emitPyramidFaces (positions, cells, s, lox, loy, loz, a, c00, c01, c10, c11) {
-  var e0, e1, e2, e3, e4, e5
-  var wa = a.w < 0
-  var w00 = c00.w < 0
-  var w01 = c01.w < 0
-  var w10 = c10.w < 0
-  var w11 = c11.w < 0
-  var mask = wa | (w00 << 1) | (w01 << 2) | (w10 << 3) | (w11 << 4)
-  switch (mask) {
-    case 0:
-      break
-    case 1:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      cells.push([e0, e1, e2])
-      cells.push([e1, e3, e2])
-      break
-    case 2:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      cells.push([e1, e0, e2])
-      break
-    case 3:
-      e0 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e4 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      cells.push([e0, e2, e3])
-      cells.push([e2, e4, e3])
-      cells.push([e4, e2, e1])
-      break
-    case 4:
-      e0 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e2 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      cells.push([e0, e1, e2])
-      break
-    case 5:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e4 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      cells.push([e0, e3, e1])
-      cells.push([e4, e2, e1])
-      cells.push([e3, e4, e1])
-      break
-    case 6:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e3 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      cells.push([e1, e0, e2])
-      cells.push([e3, e1, e2])
-      break
-    case 7:
-      e0 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e3 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      cells.push([e2, e1, e0])
-      cells.push([e1, e2, e3])
-      break
-    case 8:
-      e0 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e2 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e1, e0, e2])
-      break
-    case 9:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e4 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e3, e0, e1])
-      cells.push([e2, e4, e1])
-      cells.push([e4, e3, e1])
-      break
-    case 10:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e3 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e0, e1, e2])
-      cells.push([e1, e3, e2])
-      break
-    case 11:
-      e0 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e3 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e1, e2, e0])
-      cells.push([e2, e1, e3])
-      break
-    case 12:
-      e0 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e4 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      e5 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e1, e0, e2])
-      cells.push([e3, e1, e2])
-      cells.push([e0, e1, e4])
-      cells.push([e1, e5, e4])
-      break
-    case 13:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e4 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      e5 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e2, e3, e0])
-      cells.push([e5, e4, e1])
-      break
-    case 14:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      e4 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e2, e1, e0])
-      cells.push([e1, e2, e3])
-      cells.push([e2, e4, e3])
-      break
-    case 15:
-      e0 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      e2 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e1, e0, e2])
-      break
-    case 16:
-      e0 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      e2 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e0, e1, e2])
-      break
-    case 17:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      e4 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e3, e0, e1])
-      cells.push([e0, e3, e4])
-      cells.push([e0, e4, e2])
-      break
-    case 18:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e4 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      e5 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e0, e1, e2])
-      cells.push([e1, e0, e3])
-      cells.push([e1, e4, e2])
-      cells.push([e5, e1, e3])
-      break
-    case 19:
-      e0 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e4 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      e5 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e4, e2, e0])
-      cells.push([e3, e5, e1])
-      break
-    case 20:
-      e0 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e3 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e1, e0, e2])
-      cells.push([e3, e1, e2])
-      break
-    case 21:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e3 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e2, e1, e0])
-      cells.push([e1, e2, e3])
-      break
-    case 22:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e4 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e2, e1, e0])
-      cells.push([e3, e2, e0])
-      cells.push([e2, e3, e4])
-      break
-    case 23:
-      e0 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e2 = findCrossing(positions, s, lox, loy, loz, c10, c11)
-      cells.push([e1, e2, e0])
-      break
-    case 24:
-      e0 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e3 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      cells.push([e0, e1, e2])
-      cells.push([e1, e3, e2])
-      break
-    case 25:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      e3 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      cells.push([e1, e2, e0])
-      cells.push([e2, e1, e3])
-      break
-    case 26:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e4 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      cells.push([e1, e2, e0])
-      cells.push([e2, e3, e0])
-      cells.push([e3, e2, e4])
-      break
-    case 27:
-      e0 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e2 = findCrossing(positions, s, lox, loy, loz, c01, c11)
-      cells.push([e2, e1, e0])
-      break
-    case 28:
-      e0 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e4 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      cells.push([e1, e2, e0])
-      cells.push([e3, e1, e0])
-      cells.push([e1, e3, e4])
-      break
-    case 29:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c00, c01)
-      e2 = findCrossing(positions, s, lox, loy, loz, c00, c10)
-      cells.push([e1, e2, e0])
-      break
-    case 30:
-      e0 = findCrossing(positions, s, lox, loy, loz, c00, a)
-      e1 = findCrossing(positions, s, lox, loy, loz, c01, a)
-      e2 = findCrossing(positions, s, lox, loy, loz, c10, a)
-      e3 = findCrossing(positions, s, lox, loy, loz, c11, a)
-      cells.push([e2, e1, e0])
-      cells.push([e1, e2, e3])
-      break
-    case 31:
-      break
-  }
-}
-
 function Corner (x, y, z, l) {
   this.x = x
   this.y = y
   this.z = z
   this.w = 0
   this.l = l
-  this.adj = null
+  this.adj = []
+  this.steiner = []
 }
 
 function findCorner (corners, x, y, z) {
@@ -334,16 +67,46 @@ function findCorner (corners, x, y, z) {
   return null
 }
 
-function genSteiner (a, b, c, d) {
-  var r = new Corner(
-    Math.floor(0.25 * (a.x + b.x + c.x + d.x)) | 0,
-    Math.floor(0.25 * (a.y + b.y + c.y + d.y)) | 0,
-    Math.floor(0.25 * (a.z + b.z + c.z + d.z)) | 0,
-    Math.max(a.l, b.l, c.l, d.l))
-  r.w = (a.w + b.w + c.w + d.w) / 4
-  r.adj = []
-  window.OCTREE_CORNERS.push(r)
-  return r
+function findEdgeSteiner (tree, c0, c1, level, H) {
+  var x = (c0.x >> 1) + (c1.x >> 1)
+  var y = (c0.y >> 1) + (c1.y >> 1)
+  var z = (c0.z >> 1) + (c1.z >> 1)
+
+  var steiner = c0.steiner
+  for (var i = 0; i < steiner.length; ++i) {
+    var ss = steiner[i]
+    if (ss.x === x && ss.y === y && ss.z === z) {
+      return ss
+    }
+  }
+
+  var cc = new Corner(x, y, z, c0.l)
+  cc.w = sampleFilter(tree, x, y, z, H) - level
+  c0.steiner.push(cc)
+  c1.steiner.push(cc)
+  return cc
+}
+
+function genFaceSteiner (tree, a, b, c, d, f0, f1) {
+  var x = Math.floor(0.25 * (a.x + b.x + c.x + d.x)) | 0
+  var y = Math.floor(0.25 * (a.y + b.y + c.y + d.y)) | 0
+  var z = Math.floor(0.25 * (a.z + b.z + c.z + d.z)) | 0
+
+  var steiner = a.steiner
+  for (var i = 0; i < steiner.length; ++i) {
+    var ss = steiner[i]
+    if (ss.x === x && ss.y === y && ss.z === z) {
+      return ss
+    }
+  }
+
+  var cc = new Corner(x, y, z, a.l)
+  cc.w = 0.5 * (f0 + f1)
+  a.steiner.push(cc)
+  b.steiner.push(cc)
+  c.steiner.push(cc)
+  d.steiner.push(cc)
+  return cc
 }
 
 function emitTetFaces (positions, cells, s, lox, loy, loz, a, b, c, d) {
@@ -355,19 +118,19 @@ function emitTetFaces (positions, cells, s, lox, loy, loz, a, b, c, d) {
   var mask = aw | (bw << 1) | (cw << 2) | (dw << 3)
   switch (mask) {
     case 0:
-    break;
+      break
     case 1:
       e0 = findCrossing(positions, s, lox, loy, loz, a, b)
       e1 = findCrossing(positions, s, lox, loy, loz, a, c)
       e2 = findCrossing(positions, s, lox, loy, loz, a, d)
       cells.push([e0, e1, e2])
-    break;
+      break
     case 2:
       e0 = findCrossing(positions, s, lox, loy, loz, a, b)
       e1 = findCrossing(positions, s, lox, loy, loz, b, c)
       e2 = findCrossing(positions, s, lox, loy, loz, b, d)
       cells.push([e1, e0, e2])
-    break;
+      break
     case 3:
       e0 = findCrossing(positions, s, lox, loy, loz, a, c)
       e1 = findCrossing(positions, s, lox, loy, loz, a, d)
@@ -375,13 +138,13 @@ function emitTetFaces (positions, cells, s, lox, loy, loz, a, b, c, d) {
       e3 = findCrossing(positions, s, lox, loy, loz, b, d)
       cells.push([e2, e0, e1])
       cells.push([e3, e2, e1])
-    break;
+      break
     case 4:
       e0 = findCrossing(positions, s, lox, loy, loz, a, c)
       e1 = findCrossing(positions, s, lox, loy, loz, b, c)
       e2 = findCrossing(positions, s, lox, loy, loz, c, d)
       cells.push([e0, e1, e2])
-    break;
+      break
     case 5:
       e0 = findCrossing(positions, s, lox, loy, loz, a, b)
       e1 = findCrossing(positions, s, lox, loy, loz, a, d)
@@ -389,7 +152,7 @@ function emitTetFaces (positions, cells, s, lox, loy, loz, a, b, c, d) {
       e3 = findCrossing(positions, s, lox, loy, loz, c, d)
       cells.push([e0, e2, e1])
       cells.push([e2, e3, e1])
-    break;
+      break
     case 6:
       e0 = findCrossing(positions, s, lox, loy, loz, a, b)
       e1 = findCrossing(positions, s, lox, loy, loz, a, c)
@@ -397,19 +160,19 @@ function emitTetFaces (positions, cells, s, lox, loy, loz, a, b, c, d) {
       e3 = findCrossing(positions, s, lox, loy, loz, c, d)
       cells.push([e1, e0, e2])
       cells.push([e3, e1, e2])
-    break;
+      break
     case 7:
       e0 = findCrossing(positions, s, lox, loy, loz, a, d)
       e1 = findCrossing(positions, s, lox, loy, loz, b, d)
       e2 = findCrossing(positions, s, lox, loy, loz, c, d)
       cells.push([e1, e2, e0])
-    break;
+      break
     case 8:
       e0 = findCrossing(positions, s, lox, loy, loz, a, d)
       e1 = findCrossing(positions, s, lox, loy, loz, b, d)
       e2 = findCrossing(positions, s, lox, loy, loz, c, d)
       cells.push([e1, e0, e2])
-    break;
+      break
     case 9:
       e0 = findCrossing(positions, s, lox, loy, loz, a, b)
       e1 = findCrossing(positions, s, lox, loy, loz, a, c)
@@ -417,7 +180,7 @@ function emitTetFaces (positions, cells, s, lox, loy, loz, a, b, c, d) {
       e3 = findCrossing(positions, s, lox, loy, loz, c, d)
       cells.push([e2, e0, e1])
       cells.push([e3, e2, e1])
-    break;
+      break
     case 10:
       e0 = findCrossing(positions, s, lox, loy, loz, a, b)
       e1 = findCrossing(positions, s, lox, loy, loz, a, d)
@@ -425,13 +188,13 @@ function emitTetFaces (positions, cells, s, lox, loy, loz, a, b, c, d) {
       e3 = findCrossing(positions, s, lox, loy, loz, c, d)
       cells.push([e0, e1, e2])
       cells.push([e1, e3, e2])
-    break;
+      break
     case 11:
       e0 = findCrossing(positions, s, lox, loy, loz, a, c)
       e1 = findCrossing(positions, s, lox, loy, loz, b, c)
       e2 = findCrossing(positions, s, lox, loy, loz, c, d)
       cells.push([e2, e1, e0])
-    break;
+      break
     case 12:
       e0 = findCrossing(positions, s, lox, loy, loz, a, c)
       e1 = findCrossing(positions, s, lox, loy, loz, a, d)
@@ -439,25 +202,25 @@ function emitTetFaces (positions, cells, s, lox, loy, loz, a, b, c, d) {
       e3 = findCrossing(positions, s, lox, loy, loz, b, d)
       cells.push([e1, e0, e2])
       cells.push([e3, e1, e2])
-    break;
+      break
     case 13:
       e0 = findCrossing(positions, s, lox, loy, loz, a, b)
       e1 = findCrossing(positions, s, lox, loy, loz, b, c)
       e2 = findCrossing(positions, s, lox, loy, loz, b, d)
       cells.push([e1, e2, e0])
-    break;
+      break
     case 14:
       e0 = findCrossing(positions, s, lox, loy, loz, a, b)
       e1 = findCrossing(positions, s, lox, loy, loz, a, c)
       e2 = findCrossing(positions, s, lox, loy, loz, a, d)
       cells.push([e2, e1, e0])
-    break;
+      break
     case 15:
-    break;
+      break
   }
 }
 
-function emitSteinerFaces (positions, cells, s, lox, loy, loz, corners, a, b, y, c0, c1, dx, dy, dz) {
+function emitSteinerFaces (tree, positions, cells, s, lox, loy, loz, corners, a, b, y, c0, c1, dx, dy, dz, level, H) {
   var v = c0
   while (v !== c1) {
     var r = 1 << (30 - v.l)
@@ -466,14 +229,19 @@ function emitSteinerFaces (positions, cells, s, lox, loy, loz, corners, a, b, y,
       u = findCorner(corners, v.x + r * dx, v.y + r * dy, v.z + r * dz)
       r <<= 1
     }
-    emitTetFaces(positions, cells, s, lox, loy, loz, y, a, u, v)
-    emitTetFaces(positions, cells, s, lox, loy, loz, y, b, v, u)
+    var ss = findEdgeSteiner(tree, u, v, level, H)
+    emitTetFaces(positions, cells, s, lox, loy, loz, y, a, u, ss)
+    emitTetFaces(positions, cells, s, lox, loy, loz, y, a, ss, v)
+    emitTetFaces(positions, cells, s, lox, loy, loz, y, b, v, ss)
+    emitTetFaces(positions, cells, s, lox, loy, loz, y, b, ss, u)
     v = u
   }
 }
 
-function emitTopology (index, corners, cellCorners) {
+function emitTopology (index, corners, cellCorners, level) {
+  console.time('topo')
   var tree = index.tree
+  var H = 1 << (30 - index.depth)
 
   var bounds = index.bounds
   var lo = bounds[0]
@@ -516,12 +284,12 @@ function emitTopology (index, corners, cellCorners) {
       c010 = c010 || findCorner(corners, x, y + r, z)
       c001 = c001 || findCorner(corners, x, y, z + r)
       c011 = c011 || findCorner(corners, x, y + r, z + r)
-      steiner = genSteiner(c000, c010, c001, c011)
       ncorner = cellCorners[nidx]
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c000, c010, 0, 1, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c010, c011, 0, 0, 1)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c011, c001, 0, -1, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c001, c000, 0, 0, -1)
+      steiner = genFaceSteiner(tree, c000, c010, c001, c011, ncorner.w, cc.w)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c000, c010, 0, 1, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c010, c011, 0, 0, 1, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c011, c001, 0, -1, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c001, c000, 0, 0, -1, level, H)
     }
 
     nidx = search(tree, x + r, y, z)
@@ -531,12 +299,12 @@ function emitTopology (index, corners, cellCorners) {
       c101 = c101 || findCorner(corners, x + r, y, z + r)
       c110 = c110 || findCorner(corners, x + r, y + r, z)
       c111 = c111 || findCorner(corners, x + r, y + r, z + r)
-      steiner = genSteiner(c100, c101, c110, c111)
       ncorner = cellCorners[nidx]
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c100, c101, 0, 0, 1)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c101, c111, 0, 1, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c111, c110, 0, 0, -1)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c110, c100, 0, -1, 0)
+      steiner = genFaceSteiner(tree, c100, c101, c110, c111, ncorner.w, cc.w)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c100, c101, 0, 0, 1, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c101, c111, 0, 1, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c111, c110, 0, 0, -1, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c110, c100, 0, -1, 0, level, H)
     }
 
     nidx = search(tree, x, y - 1, z)
@@ -546,12 +314,12 @@ function emitTopology (index, corners, cellCorners) {
       c001 = c001 || findCorner(corners, x, y, z + r)
       c100 = c100 || findCorner(corners, x + r, y, z)
       c101 = c101 || findCorner(corners, x + r, y, z + r)
-      steiner = genSteiner(c000, c001, c100, c101)
       ncorner = cellCorners[nidx]
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c000, c001, 0, 0, 1)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c001, c101, 1, 0, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c101, c100, 0, 0, -1)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c100, c000, -1, 0, 0)
+      steiner = genFaceSteiner(tree, c000, c001, c100, c101, ncorner.w, cc.w)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c000, c001, 0, 0, 1, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c001, c101, 1, 0, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c101, c100, 0, 0, -1, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c100, c000, -1, 0, 0, level, H)
     }
 
     nidx = search(tree, x, y + r, z)
@@ -561,12 +329,12 @@ function emitTopology (index, corners, cellCorners) {
       c110 = c110 || findCorner(corners, x + r, y + r, z)
       c011 = c011 || findCorner(corners, x, y + r, z + r)
       c111 = c111 || findCorner(corners, x + r, y + r, z + r)
-      steiner = genSteiner(c010, c110, c011, c111)
       ncorner = cellCorners[nidx]
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c010, c110, 1, 0, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c110, c111, 0, 0, 1)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c111, c011, -1, 0, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c011, c010, 0, 0, -1)
+      steiner = genFaceSteiner(tree, c010, c110, c011, c111, ncorner.w, cc.w)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c010, c110, 1, 0, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c110, c111, 0, 0, 1, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c111, c011, -1, 0, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c011, c010, 0, 0, -1, level, H)
     }
 
     nidx = search(tree, x, y, z - 1)
@@ -576,12 +344,12 @@ function emitTopology (index, corners, cellCorners) {
       c100 = c100 || findCorner(corners, x + r, y, z)
       c010 = c010 || findCorner(corners, x, y + r, z)
       c110 = c110 || findCorner(corners, x + r, y + r, z)
-      steiner = genSteiner(c000, c100, c010, c110)
       ncorner = cellCorners[nidx]
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c000, c100, 1, 0, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c100, c110, 0, 1, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c110, c010, -1, 0, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c010, c000, 0, -1, 0)
+      steiner = genFaceSteiner(tree, c000, c100, c010, c110, ncorner.w, cc.w)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c000, c100, 1, 0, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c100, c110, 0, 1, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c110, c010, -1, 0, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c010, c000, 0, -1, 0, level, H)
     }
 
     nidx = search(tree, x, y, z + r)
@@ -591,14 +359,16 @@ function emitTopology (index, corners, cellCorners) {
       c011 = c011 || findCorner(corners, x, y + r, z + r)
       c101 = c101 || findCorner(corners, x + r, y, z + r)
       c111 = c111 || findCorner(corners, x + r, y + r, z + r)
-      steiner = genSteiner(c001, c011, c101, c111)
       ncorner = cellCorners[nidx]
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c001, c011, 0, 1, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c011, c111, 1, 0, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c111, c101, 0, -1, 0)
-      emitSteinerFaces(positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c101, c001, -1, 0, 0)
+      steiner = genFaceSteiner(tree, c001, c011, c101, c111, ncorner.w, cc.w)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c001, c011, 0, 1, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c011, c111, 1, 0, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c111, c101, 0, -1, 0, level, H)
+      emitSteinerFaces(tree, positions, cells, s, lox, loy, loz, corners, cc, ncorner, steiner, c101, c001, -1, 0, 0, level, H)
     }
   }
+
+  console.timeEnd('topo')
 
   return {
     positions: positions,
@@ -606,7 +376,7 @@ function emitTopology (index, corners, cellCorners) {
   }
 }
 
-function sampleNeighbor (tree, x, y, z) {
+function sample (tree, x, y, z) {
   var w = 0
   for (var dx = 0; dx < 2; ++dx) {
     for (var dy = 0; dy < 2; ++dy) {
@@ -616,6 +386,10 @@ function sampleNeighbor (tree, x, y, z) {
     }
   }
   return w / 8
+}
+
+function sampleFilter (tree, x, y, z, h) {
+  return sample(tree, x, y, z)
 }
 
 function compareCorners (a, b) {
@@ -629,6 +403,9 @@ module.exports = function contourHaar (index, level_) {
   var tree = index.tree
   var octreeCells = tree.cells
 
+  var H = 1 << (30 - index.depth)
+
+  console.time('corners')
   // 1st pass: generate corners and faces
   var cptr = 0
   var corners = new Array(octreeCells.length * 8)
@@ -652,8 +429,7 @@ module.exports = function contourHaar (index, level_) {
     corners[cptr++] = new Corner(x + r, y + r, z + r, l)
 
     var cc = new Corner(x + (r >> 1), y + (r >> 1), z + (r >> 1), l)
-    cc.w = c.w - level
-    cc.adj = []
+    cc.w = sampleFilter(tree, cc.x, cc.y, cc.z, H) - level
     cellCorners[i] = cc
   }
 
@@ -671,14 +447,12 @@ module.exports = function contourHaar (index, level_) {
     var corner = corners[i]
     corners[ptr++] = corner
     corner.l = lmax
-    corner.w = sampleNeighbor(tree, corner.x, corner.y, corner.z) - level
-    corner.adj = []
+    corner.w = sampleFilter(tree, corner.x, corner.y, corner.z, H) - level
   }
   corners.length = ptr
-
-  window.OCTREE_CORNERS = corners.concat(cellCorners)
+  console.timeEnd('corners')
 
   // final pass: emit topology
-  return emitTopology(index, corners, cellCorners)
+  return emitTopology(index, corners, cellCorners, level)
 }
 
