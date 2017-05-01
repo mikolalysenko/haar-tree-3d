@@ -3,13 +3,13 @@ This module is an implementation of a sparse 3-dimensional Haar wavelet basis. Y
 
 * Voxelize boundary representations (polygons, meshes, etc.)
 * Fill holes in meshes
-*
+* Smooth or clean up noisy data
 
-It is based on the following results
+The rasterization technique is based on the following paper:
 
-* Wavelett Rasterization
-* Wavelett contouring
-* Multires surface extraction
+J. Manson, S. Schaefer. (2011) "[Wavelet Rasterization](http://josiahmanson.com/research/wavelet_rasterization/)", Computer Graphics Forum
+
+<img src="img/screenshot.png" />
 
 ## Install
 
@@ -17,11 +17,24 @@ It is based on the following results
 npm i haar-tree-3d
 ```
 
+## Example
+
+```javascript
+const bunny = require('bunny')
+const rasterize = require('haar-tree-3d/rasterize-cells')
+const contour = require('haar-tree-3d/contour')
+
+const tree = rasterize(bunny.cells, bunny.positions)
+
+const
+
+```
+
 ## Usage
 
 ### Rasterization
 
-#### `var tree = require('haar-3d/rasterize-cells)(cells, positions[, options])`
+#### `var tree = require('haar-tree-3d/rasterize-cells)(cells, positions[, options])`
 
 Rasterizes a triangular mesh into a sparse wavelet representation
 
@@ -34,23 +47,28 @@ Rasterizes a triangular mesh into a sparse wavelet representation
 
 ### Sampling
 
-#### `var value = require('haar-3d/sample')(tree, x, y, z)`
+#### `var value = require('haar-tree-3d/sample')(tree, x, y, z)`
 Samples the Haar wavelet tree at a specific point `(x, y, z)` in 3D space
 
 * `tree` is the Haar tree
 * `x,y,z` are the coordinates of the point
 
-#### `var array = require('haar-3d/to-ndarray')(tree[, options])`
+#### `var array = require('haar-tree-3d/to-ndarray')(tree[, options])`
 Converts the Haar tree into an ndarray.  Note that this representation is not very efficient.
 
 * `tree` is the Haar tree
 
 ### Contouring
 
-#### `var mesh = require('haar-3d/contour')(tree)`
+#### `var mesh = require('haar-tree-3d/contour')(tree)`
 Extracts a contour from a mesh field
 
 * `tree` is a Haar tree
 
-## License
+
+## Credits
+<img src="img/sc.png" />
+
+Development supported by [Standard Cyborg](http://www.standardcyborg.com).
+
 (c) 2017- Mikola Lysenko

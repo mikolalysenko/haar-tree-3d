@@ -239,7 +239,6 @@ function emitSteinerFaces (tree, positions, cells, s, lox, loy, loz, corners, a,
 }
 
 function emitTopology (index, corners, cellCorners, level) {
-  console.time('topo')
   var tree = index.tree
   var H = 1 << (30 - index.depth)
 
@@ -368,8 +367,6 @@ function emitTopology (index, corners, cellCorners, level) {
     }
   }
 
-  console.timeEnd('topo')
-
   return {
     positions: positions,
     cells: cells
@@ -405,7 +402,6 @@ module.exports = function contourHaar (index, level_) {
 
   var H = 1 << (30 - index.depth)
 
-  console.time('corners')
   // 1st pass: generate corners and faces
   var cptr = 0
   var corners = new Array(octreeCells.length * 8)
@@ -450,7 +446,6 @@ module.exports = function contourHaar (index, level_) {
     corner.w = sampleFilter(tree, corner.x, corner.y, corner.z, H) - level
   }
   corners.length = ptr
-  console.timeEnd('corners')
 
   // final pass: emit topology
   return emitTopology(index, corners, cellCorners, level)

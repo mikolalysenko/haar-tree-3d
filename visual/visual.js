@@ -223,7 +223,6 @@ regl.frame(() => {
     drawMesh({ color: [0, 1, 0, 1] })
 
     // drawOriginal({ color: [1, 1, 1, 1] })
-    /*
     haarIndex.tree.cells.forEach(function ({x, y, z, l}) {
       var r = 1 << (30 - l)
       drawWireBox({
@@ -234,8 +233,7 @@ regl.frame(() => {
         color: [1, 1, 1, 1]
       })
     })
-    */
-
+    
     /*
     var s = 8.0 / (1 << 30)
     window.OCTREE_CORNERS.forEach(({x, y, z, w, adj}) => {
