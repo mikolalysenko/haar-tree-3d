@@ -9,7 +9,7 @@ The rasterization technique is based on the following paper:
 
 J. Manson, S. Schaefer. (2011) "[Wavelet Rasterization](http://josiahmanson.com/research/wavelet_rasterization/)", Computer Graphics Forum
 
-<img src="img/screenshot.png" />
+<img width="400px" src="img/screenshot.png" />
 
 ## Install
 
@@ -24,10 +24,11 @@ const bunny = require('bunny')
 const rasterize = require('haar-tree-3d/rasterize-cells')
 const contour = require('haar-tree-3d/contour')
 
-const tree = rasterize(bunny.cells, bunny.positions)
+// renders the bunny mesh into a wavelet basis
+const tree = rasterize(bunny.cells, bunny.positions, {depth: 6})
 
-const
-
+// extracts an isosurface mesh contour
+const isomesh = contour(tree)
 ```
 
 ## Usage
