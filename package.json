@@ -1,13 +1,12 @@
 {
   "name": "haar-3d",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fills holes in meshes, interpolates point clouds, adaptively contours octrees, voxelization and much more",
   "main": "contour.js",
   "directories": {
     "test": "test"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "convex-hull": "^1.0.3",
     "bunny": "^1.0.1",
